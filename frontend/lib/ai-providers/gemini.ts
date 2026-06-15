@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 let _genAI: GoogleGenerativeAI | null = null;
 
 function getGenAI(): GoogleGenerativeAI {
-  const key = (process.env.GEMINI_API_KEY || "dummy-key").replace(/['"]/g, "");
+  const key = (process.env.GEMINI_API_KEY || "dummy-key").replace(/['"]/g, "").trim();
   if (!_genAI) {
     _genAI = new GoogleGenerativeAI(key);
   }
