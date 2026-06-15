@@ -32,8 +32,8 @@ function appendToHistory(studentKey: string, role: string, content: string) {
 
 // ── Smart keyword scoring for fallback ──────────────────────────────
 const KEYWORD_SCORES: Record<string, string[]> = {
-  library: ["book", "library", "borrow", "shelf", "isbn", "hold", "copy", "checkout", "return", "reading", "author"],
-  cafeteria: ["menu", "food", "lunch", "dinner", "breakfast", "meal", "eat", "cafeteria", "vegan", "vegetarian", "price", "calorie", "snack", "drink", "item"],
+  library: ["book", "library", "available", "borrow", "shelf", "isbn", "hold", "copy", "checkout", "return", "reading", "author"],
+  cafeteria: ["menu", "food", "lunch", "dinner", "breakfast", "meal", "eat", "cafeteria", "vegan", "vegetarian", "price", "calorie", "snack", "drink"],
   events: ["event", "fest", "workshop", "club", "happening", "rsvp", "concert", "hackathon", "competition", "sports", "activity", "register", "attend"],
   academics: ["course", "class", "exam", "syllabus", "credit", "professor", "grade", "schedule", "timetable", "enrollment", "lecture", "assignment", "homework", "instructor"],
   notifications: ["alert", "notification", "announce", "deadline", "urgent", "news", "reminder", "update", "notice", "bookmark", "warning"],
