@@ -113,11 +113,13 @@ export async function queryGemini(
     throw err;
   }
 
-  const response = result.response;
+  let currentResponse = result.response;
   const toolCallResults: Array<{ server: string; tool: string; args: any }> = [];
-  const functionCalls = response.functionCalls();
-
-  if (functionCalls && functionCalls.length > 0) {
+  
+  let iterations = 0;
+  while (currentResponse.functionCalls() && currentResponse.functionCalls()!.length > 0 && iterations < 5) {
+    iterations++;
+    const functionCalls = currentResponse.functionCalls()!;
     console.log(`[Gemini] AI requested ${functionCalls.length} tool call(s): ${functionCalls.map(fc => fc.name).join(", ")}`);
     const functionResponses: any[] = [];
 
@@ -129,8 +131,6 @@ export async function queryGemini(
       try {
         const toolResult = await callTool(serverName, toolName, args);
 
-        // 💡 OPTIMIZATION: Keep response as a raw structural object if possible 
-        // so Gemini digests the object parameters natively without text escaping.
         const structuralResponse = typeof toolResult === "string"
           ? { result: toolResult }
           : toolResult;
@@ -152,18 +152,22 @@ export async function queryGemini(
       }
     }
 
-    const finalResult = await chat.sendMessage(functionResponses);
-    const finalText = finalResult.response.text();
-    console.log(`[Gemini] Final response length: ${finalText?.length || 0} chars`);
-
-    return {
-      answer: finalResult.response.text() || "I couldn't generate a response.",
-      toolCalls: toolCallResults,
-    };
+    const nextResult = await chat.sendMessage(functionResponses);
+    currentResponse = nextResult.response;
   }
 
-  const textResponse = response.text();
-  console.log(`[Gemini] Direct response (no tools): ${textResponse?.substring(0, 100)}...`);
+  let textResponse = "";
+  try {
+    textResponse = currentResponse.text();
+  } catch (e) {
+    console.log("[Gemini] Could not get text response from model:", e);
+  }
+  
+  if (toolCallResults.length > 0) {
+    console.log(`[Gemini] Final response length: ${textResponse.length} chars (after ${iterations} tool-call iterations)`);
+  } else {
+    console.log(`[Gemini] Direct response (no tools): ${textResponse.substring(0, 100)}...`);
+  }
 
   return {
     answer: textResponse || "I couldn't generate a response.",
