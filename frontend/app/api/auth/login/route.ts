@@ -10,13 +10,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
     }
 
-    let mappedEmail = email;
-    if (email === "alice@cs.iitr.in") mappedEmail = "alice@campus.edu";
-    if (email === "bob@ece.iitr.ac.in") mappedEmail = "bob@campus.edu";
-    if (email === "yogya@cs.iitr.in") mappedEmail = "carol@campus.edu";
-
     // Verify credentials via academics MCP server
-    const result = await callMcpJson("academics", "verify_student_login", { email: mappedEmail, password });
+    const result = await callMcpJson("academics", "verify_student_login", { email, password });
 
     if (!result.success) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
@@ -28,18 +23,6 @@ export async function POST(req: NextRequest) {
     const isValid = await comparePassword(password, student.password_hash);
     if (!isValid) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
-    }
-
-    // Map backend student data back to frontend identities
-    if (student.email === "alice@campus.edu") {
-      student.email = "alice@cs.iitr.in";
-    } else if (student.email === "bob@campus.edu") {
-      student.email = "bob@ece.iitr.ac.in";
-      student.major = "Electronics";
-    } else if (student.email === "carol@campus.edu") {
-      student.email = "yogya@cs.iitr.in";
-      student.name = "Yogya";
-      student.major = "Computer Science";
     }
 
     // Create JWT
