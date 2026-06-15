@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getSession } from "@/lib/auth";
+
 const CAFETERIA_URL = process.env.MCP_CAFETERIA_URL || "http://127.0.0.1:4002";
 
 export async function POST(req: NextRequest) {
   try {
-    const { itemId, studentId } = await req.json();
+    const { itemId } = await req.json();
+    const session = await getSession();
+    const studentId = session?.studentId || "STU001";
     if (!itemId) return NextResponse.json({ error: "itemId required" }, { status: 400 });
 
     const res = await fetch(`${CAFETERIA_URL}/rpc`, {

@@ -384,6 +384,12 @@ app.post("/rpc", express.json(), (req, res) => {
         result = rows.map(r => r.book_id);
         break;
       }
+      case "get_user_holds": {
+        const studentId = params?.studentId || "STU001";
+        const rows = db.prepare("SELECT book_id FROM holds WHERE student_id = ? AND status = 'pending'").all(studentId);
+        result = rows.map(r => r.book_id);
+        break;
+      }
       default:
         return res.status(404).json({ error: `Unknown method: ${method}` });
     }

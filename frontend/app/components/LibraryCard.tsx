@@ -43,10 +43,26 @@ export default function LibraryCard() {
   const fetchData = useCallback(async (silent = false) => {
     try {
       if (!silent) setLoading(true);
-      const res = await fetch('/api/library');
+      const [res, holdsRes] = await Promise.all([
+        fetch('/api/library', { cache: 'no-store' }),
+        fetch('/api/library/user-holds', { cache: 'no-store' })
+      ]);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const result = await res.json();
       if (result.error) throw new Error(result.error);
+      
+      let holdIds: number[] = [];
+      if (holdsRes.ok) {
+        const holdsData = await holdsRes.json();
+        holdIds = holdsData.holdIds || [];
+      }
+      
+      const initialHoldState: Record<number, 'idle' | 'loading' | 'done'> = {};
+      holdIds.forEach(id => {
+        initialHoldState[id] = 'done';
+      });
+      setHoldState(initialHoldState);
+      
       setData(result);
       setLastUpdated(new Date());
       setError('');

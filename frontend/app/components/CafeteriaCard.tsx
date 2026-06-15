@@ -32,8 +32,8 @@ export default function CafeteriaCard() {
     try {
       if (!silent) setLoading(true);
       const [menuRes, favRes] = await Promise.all([
-        fetch('/api/cafeteria'),
-        fetch('/api/cafeteria/my-favorites')
+        fetch('/api/cafeteria', { cache: 'no-store' }),
+        fetch('/api/cafeteria/my-favorites', { cache: 'no-store' })
       ]);
       if (!menuRes.ok) throw new Error('Failed to fetch menu');
       const menuResult = await menuRes.json();
