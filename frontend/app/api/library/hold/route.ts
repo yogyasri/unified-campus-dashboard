@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getSession } from "@/lib/auth";
+
 const LIBRARY_URL = process.env.MCP_LIBRARY_URL || "http://127.0.0.1:4001";
 
 export async function POST(req: NextRequest) {
   try {
-    const { bookId, studentId } = await req.json();
+    const { bookId } = await req.json();
+    const session = await getSession();
+    const studentId = session?.studentId || "STU001";
     if (!bookId) return NextResponse.json({ error: "bookId required" }, { status: 400 });
 
     const res = await fetch(`${LIBRARY_URL}/rpc`, {

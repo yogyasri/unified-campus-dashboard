@@ -5,9 +5,9 @@ const NOTIFICATIONS_URL = process.env.MCP_NOTIFICATIONS_URL || "http://127.0.0.1
 
 export async function POST(req: NextRequest) {
   try {
+    const { announcementId } = await req.json();
     const session = await getSession();
     const studentId = session?.studentId || "STU001";
-    const { announcementId } = await req.json();
     if (!announcementId) return NextResponse.json({ error: "announcementId required" }, { status: 400 });
 
     const res = await fetch(`${NOTIFICATIONS_URL}/rpc`, {

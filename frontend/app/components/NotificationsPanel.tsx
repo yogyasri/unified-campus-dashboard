@@ -38,8 +38,8 @@ export default function NotificationsPanel() {
     try {
       if (!silent) setLoading(true);
       const [notifRes, bmRes] = await Promise.all([
-        fetch('/api/notifications'),
-        fetch('/api/notifications/my-bookmarks')
+        fetch('/api/notifications', { cache: 'no-store' }),
+        fetch('/api/notifications/my-bookmarks', { cache: 'no-store' })
       ]);
       if (!notifRes.ok) throw new Error('Failed to fetch');
       const data = await notifRes.json();

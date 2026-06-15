@@ -31,8 +31,8 @@ export default function EventsCard() {
     try {
       if (!silent) setLoading(true);
       const [eventsRes, rsvpsRes] = await Promise.all([
-        fetch('/api/events'),
-        fetch('/api/events/my-rsvps')
+        fetch('/api/events', { cache: 'no-store' }),
+        fetch('/api/events/my-rsvps', { cache: 'no-store' })
       ]);
       if (!eventsRes.ok) throw new Error('Failed to fetch events');
       const data = await eventsRes.json();

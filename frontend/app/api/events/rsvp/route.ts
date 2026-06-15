@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getSession } from "@/lib/auth";
+
 const EVENTS_URL = process.env.MCP_EVENTS_URL || "http://127.0.0.1:4003";
 
 export async function POST(req: NextRequest) {
   try {
-    const { eventId, studentId } = await req.json();
+    const { eventId } = await req.json();
+    const session = await getSession();
+    const studentId = session?.studentId || "STU001";
     if (!eventId) return NextResponse.json({ error: "eventId required" }, { status: 400 });
 
     const res = await fetch(`${EVENTS_URL}/rpc`, {
