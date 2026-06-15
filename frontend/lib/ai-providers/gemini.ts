@@ -72,11 +72,15 @@ export async function queryGemini(
   console.log(`[Gemini] Using API key: ${(process.env.GEMINI_API_KEY || "").substring(0, 8)}...`);
   console.log(`[Gemini] Sending query: "${userQuery}" with ${functionDeclarations.length} tools and ${conversationHistory.length} history messages`);
 
-  const model = genAI.getGenerativeModel({
+  const modelOptions: any = {
     model: "gemini-2.5-flash",
     systemInstruction: systemPrompt,
-    tools: [{ functionDeclarations }],
-  });
+  };
+  if (functionDeclarations.length > 0) {
+    modelOptions.tools = [{ functionDeclarations }];
+  }
+
+  const model = genAI.getGenerativeModel(modelOptions);
 
   const geminiHistory: Array<{ role: "user" | "model"; parts: { text: string }[] }> = [];
   for (const msg of conversationHistory) {
