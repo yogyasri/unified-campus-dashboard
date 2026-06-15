@@ -89,14 +89,19 @@ if (count.c === 0) {
 
   // Seed demo students (bcrypt hash of "password123")
   const insertStudent = db.prepare(`
-    INSERT INTO students (student_id, name, email, password_hash, major, year, gpa)
+    INSERT INTO students (student_id, email, name, password_hash, major, year, gpa)
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `);
-  // Hash for "password123" - will be verified with bcryptjs
   const hash = "$2a$10$oalt2/oXDXlNJc8BClu0mOdX42a1MqMD1odYVvI4jPjSE9dtjSZze";
-  insertStudent.run("STU001", "Alice Chen", "alice@campus.edu", hash, "Computer Science", 3, 3.8);
-  insertStudent.run("STU002", "Bob Martinez", "bob@campus.edu", hash, "Mathematics", 2, 3.5);
-  insertStudent.run("STU003", "Carol Johnson", "carol@campus.edu", hash, "Engineering", 4, 3.9);
+  const students = [
+    ["STU001", "alice@cs.iitr.in", "Alice Chen", hash, "Computer Science", 3, 3.8],
+    ["STU002", "bob@ece.iitr.ac.in", "Bob Martinez", hash, "Electronics", 2, 3.5],
+    ["STU003", "yogya@cs.iitr.in", "Yogya", hash, "Computer Science", 4, 3.9],
+  ];
+  const insertManyStudents = db.transaction((students) => {
+    for (const s of students) insertStudent.run(...s);
+  });
+  insertManyStudents(students);
 
   // Seed enrollments
   const insertEnrollment = db.prepare("INSERT INTO enrollments (student_id, course_code, grade) VALUES (?, ?, ?)");

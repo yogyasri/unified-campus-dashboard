@@ -71,7 +71,7 @@ export default function LoginPage() {
             <input
               type="email"
               className="input-field"
-              placeholder="alice@campus.edu"
+              placeholder="alice@cs.iitr.in"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -128,9 +128,9 @@ export default function LoginPage() {
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {[
-              { email: 'alice@campus.edu', name: 'Alice Chen', major: 'Computer Science' },
-              { email: 'bob@campus.edu', name: 'Bob Martinez', major: 'Mathematics' },
-              { email: 'carol@campus.edu', name: 'Carol Johnson', major: 'Engineering' },
+              { email: 'alice@cs.iitr.in', name: 'Alice Chen', major: 'Computer Science' },
+              { email: 'bob@ece.iitr.ac.in', name: 'Bob Martinez', major: 'Electronics' },
+              { email: 'yogya@cs.iitr.in', name: 'Yogya', major: 'Computer Science' },
             ].map((demo) => (
               <button
                 key={demo.email}
