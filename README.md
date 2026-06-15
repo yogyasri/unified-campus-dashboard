@@ -1,15 +1,14 @@
-# 🏫 Campus Hub — Unified Campus Dashboard
+#  Unified Campus Dashboard with Ai Assistant
 
 > **AI-powered campus dashboard** that dynamically queries independent MCP (Model Context Protocol) servers for real-time campus data — no single giant database.
+> ** demo link:
+> **deployed links:
+> *frontend dashboard:
+> *mcp servers:
+> 
 
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
-[![MCP](https://img.shields.io/badge/MCP-Protocol-blue)](https://modelcontextprotocol.io)
-[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-green?logo=openai)](https://openai.com)
-[![SQLite](https://img.shields.io/badge/SQLite-Database-blue?logo=sqlite)](https://sqlite.org)
 
----
-
-## 🎯 Overview
+##  Overview
 
 Instead of building massive web scrapers that dump everything into one giant database, Campus Hub uses **independent MCP servers** for each campus data source. The AI assistant dynamically routes natural-language queries to the appropriate server(s) in real-time.
 
@@ -25,7 +24,7 @@ Instead of building massive web scrapers that dump everything into one giant dat
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -46,7 +45,7 @@ Instead of building massive web scrapers that dump everything into one giant dat
 │                   │  (SSE Connections)  │                         │
 │                   └─────────┬──────────┘                         │
 └─────────────────────────────┼────────────────────────────────────┘
-                              │ HTTP/SSE
+                              │ SSE
            ┌──────────────────┼──────────────────────┐
            │                  │                      │
      ┌─────┴─────┐   ┌──────┴──────┐   ┌───────────┴────────────┐
@@ -75,7 +74,7 @@ Instead of building massive web scrapers that dump everything into one giant dat
 | Database | SQLite (better-sqlite3) per server |
 | AI | OpenAI GPT-4o + Google Gemini (configurable) |
 | Auth | Custom JWT + bcryptjs |
-| Protocol | Model Context Protocol (MCP) over HTTP/SSE |
+| Protocol | Model Context Protocol (MCP) over SSE |
 
 ---
 
@@ -84,7 +83,7 @@ Instead of building massive web scrapers that dump everything into one giant dat
 ### Prerequisites
 
 - **Node.js** 20+ installed
-- **OpenAI API Key** OR **Google Gemini API Key**
+-  **Google Gemini API Key**
 
 ### 1. Clone the Repository
 
@@ -160,9 +159,9 @@ Use one of the demo accounts:
 
 | Email | Password | Major |
 |-------|----------|-------|
-| alice@campus.edu | password123 | Computer Science |
-| bob@campus.edu | password123 | Mathematics |
-| carol@campus.edu | password123 | Engineering |
+| alice@cs.iitr.ac.in | password123 | Computer Science |
+| bob@ece.iitr.ac.in | password123 | Electronics |
+| yogya@cs.iitr.ac.in | password123 | Computer Science |
 
 ---
 
@@ -252,8 +251,3 @@ unified-campus-hub/
 - `get_deadlines` — Upcoming deadlines
 - `search_announcements` — Search by keyword
 
----
-
-## 📝 License
-
-MIT License — feel free to use this for your own campus!
