@@ -129,13 +129,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     },
     {
       name: "get_book_details",
-      description: "Get detailed information about a specific book by ID",
+      description: "Get detailed information about a specific book by ID or title",
       inputSchema: {
         type: "object",
         properties: {
-          bookId: { type: "number", description: "ID of the book" },
+          bookId: { type: "number", description: "ID of the book (optional if title is provided)" },
+          title: { type: "string", description: "Exact title of the book (optional if bookId is provided)" },
         },
-        required: ["bookId"],
+        required: [],
       },
     },
     {
@@ -159,10 +160,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       inputSchema: {
         type: "object",
         properties: {
-          bookId: { type: "number", description: "ID of the book to hold" },
+          bookId: { type: "number", description: "ID of the book to hold (optional if title is provided)" },
+          title: { type: "string", description: "Exact title of the book (optional if bookId is provided)" },
           studentId: { type: "string", description: "Student ID" },
         },
-        required: ["bookId"],
+        required: [],
       },
     },
     {
@@ -176,10 +178,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       inputSchema: {
         type: "object",
         properties: {
-          bookId: { type: "number", description: "ID of the book to borrow" },
+          bookId: { type: "number", description: "ID of the book to borrow (optional if title is provided)" },
+          title: { type: "string", description: "Exact title of the book (optional if bookId is provided)" },
           studentId: { type: "string", description: "Student ID" },
         },
-        required: ["bookId"],
+        required: [],
       },
     },
     {
@@ -214,7 +217,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     case "get_book_details": {
-      const book = db.prepare("SELECT * FROM books WHERE id = ?").get(args.bookId);
+      let book;
+      if (args.bookId) {
+        book = db.prepare("SELECT * FROM books WHERE id = ?").get(args.bookId);
+      } else if (args.title) {
+        book = db.prepare("SELECT * FROM books WHERE LOWER(title) LIKE ?").get(`%${args.title.toLowerCase()}%`);
+      }
       if (!book) {
         return { content: [{ type: "text", text: "Book not found" }], isError: true };
       }
@@ -239,11 +247,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     case "place_hold": {
-      const bookId = args.bookId;
       const studentId = args.studentId || "STU001";
-      const book = db.prepare("SELECT * FROM books WHERE id = ?").get(bookId);
+      let book;
+      if (args.bookId) {
+        book = db.prepare("SELECT * FROM books WHERE id = ?").get(args.bookId);
+      } else if (args.title) {
+        book = db.prepare("SELECT * FROM books WHERE LOWER(title) LIKE ?").get(`%${args.title.toLowerCase()}%`);
+      }
       if (!book) return { content: [{ type: "text", text: "Book not found" }], isError: true };
-      const hold = db.prepare("INSERT INTO holds (book_id, student_id) VALUES (?, ?)").run(bookId, studentId);
+      const hold = db.prepare("INSERT INTO holds (book_id, student_id) VALUES (?, ?)").run(book.id, studentId);
       return { content: [{ type: "text", text: JSON.stringify({ success: true, holdId: hold.lastInsertRowid, book: book.title, message: `Hold placed for "${book.title}" — you'll be notified when it's available.` }) }] };
     }
 
@@ -253,14 +265,18 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     case "borrow_book": {
-      const bookId = args.bookId;
       const studentId = args.studentId || "STU001";
-      const book = db.prepare("SELECT * FROM books WHERE id = ?").get(bookId);
+      let book;
+      if (args.bookId) {
+        book = db.prepare("SELECT * FROM books WHERE id = ?").get(args.bookId);
+      } else if (args.title) {
+        book = db.prepare("SELECT * FROM books WHERE LOWER(title) LIKE ?").get(`%${args.title.toLowerCase()}%`);
+      }
       if (!book) return { content: [{ type: "text", text: "Book not found" }], isError: true };
       if (book.available <= 0) return { content: [{ type: "text", text: JSON.stringify({ success: false, reason: "No copies available" }) }] };
-      db.prepare("UPDATE books SET available = available - 1 WHERE id = ?").run(bookId);
-      db.prepare("INSERT INTO borrowals (book_id, student_id) VALUES (?, ?)").run(bookId, studentId);
-      const updated = db.prepare("SELECT *, (total_copies - available) as borrowed FROM books WHERE id = ?").get(bookId);
+      db.prepare("UPDATE books SET available = available - 1 WHERE id = ?").run(book.id);
+      db.prepare("INSERT INTO borrowals (book_id, student_id) VALUES (?, ?)").run(book.id, studentId);
+      const updated = db.prepare("SELECT *, (total_copies - available) as borrowed FROM books WHERE id = ?").get(book.id);
       return { content: [{ type: "text", text: JSON.stringify({ success: true, book: updated, message: `"${book.title}" borrowed! Due back in 14 days.` }) }] };
     }
 

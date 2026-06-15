@@ -8,7 +8,6 @@ import LibraryCard from './components/LibraryCard';
 import CafeteriaCard from './components/CafeteriaCard';
 import EventsCard from './components/EventsCard';
 import NotificationsPanel from './components/NotificationsPanel';
-import CampusMap from './components/CampusMap';
 import ChatPanel from './components/ChatPanel';
 import AcademicsPanel from './components/AcademicsPanel';
 import LibraryPage from './components/LibraryPage';
@@ -143,11 +142,6 @@ export default function DashboardPage() {
                 </div>
                 <div style={{ gridColumn: 'span 1' }}>
                   <NotificationsPanel />
-                </div>
-
-                {/* Row 3: Campus Map (full width) */}
-                <div style={{ gridColumn: '1 / -1' }}>
-                  <CampusMap />
                 </div>
               </div>
             ) : activeTab === 'library' ? (

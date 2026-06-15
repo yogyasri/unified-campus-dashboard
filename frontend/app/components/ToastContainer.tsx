@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useToast, type Toast } from '../context/ToastContext';
+import type { Toast } from '../context/ToastContext';
+import { useToast } from '../context/ToastContext';
 import { HiOutlineCheckCircle, HiOutlineXCircle, HiOutlineInformationCircle, HiOutlineXMark } from 'react-icons/hi2';
 
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {

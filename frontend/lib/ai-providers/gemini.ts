@@ -115,7 +115,7 @@ export async function queryGemini(
 
   let currentResponse = result.response;
   const toolCallResults: Array<{ server: string; tool: string; args: any }> = [];
-  
+
   let iterations = 0;
   while (currentResponse.functionCalls() && currentResponse.functionCalls()!.length > 0 && iterations < 5) {
     iterations++;
@@ -162,7 +162,7 @@ export async function queryGemini(
   } catch (e) {
     console.log("[Gemini] Could not get text response from model:", e);
   }
-  
+
   if (toolCallResults.length > 0) {
     console.log(`[Gemini] Final response length: ${textResponse.length} chars (after ${iterations} tool-call iterations)`);
   } else {

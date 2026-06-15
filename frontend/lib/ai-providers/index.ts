@@ -21,10 +21,6 @@ function isRateLimit(err: unknown): boolean {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/**
- * Attempt to call Gemini with exponential backoff on rate-limit.
- * Retries up to maxRetries times (1s → 2s → 4s) before giving up.
- */
 async function callProviderWithRetry(
   systemPrompt: string,
   userQuery: string,
@@ -52,15 +48,9 @@ async function callProviderWithRetry(
     }
   }
 
-  // Shouldn't reach here, but just in case
   throw new Error("Retry loop exhausted");
 }
 
-/**
- * Query Gemini with tools.
- * Automatically retries on rate-limit with exponential backoff.
- * Accepts conversation history for multi-turn context.
- */
 export async function queryAI(
   systemPrompt: string,
   userQuery: string,
