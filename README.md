@@ -2,7 +2,7 @@
 
 > **AI-powered campus dashboard** that dynamically queries independent MCP (Model Context Protocol) servers for real-time campus data — no single giant database.
 - **demo link**:https://drive.google.com/file/d/1EatdB0S7mkorxjJpIcU0gmi6BNVefLhv/view?usp=sharing
-- **deployed link**: unified-campus-dashboard-bkukrx5q9-yogyasris-projects.vercel.app
+- **deployed link**:unified-campus-dashboard-bkukrx5q9-yogyasris-projects.vercel.app
 > 
 
 ##  Overview
